@@ -1,19 +1,28 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
+import { MainPage, product-page, cart } from '../pages/playground';
 
-test('has title', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+test('full e2e path', async ({ page }) => {
+  await page.goto('/');
 
-  // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Playwright/);
+  await expect(page).toHaveTitle('Testowy Sklep – Strona główna');
+  await expect(page.getByRole('heading', { name: 'Strona główna' })).toBeVisible();
+
+  await expect(page.getByTestId('product-title-2')).toHaveText('Eliksir Energii');
+  await page.getByTestId('product-title-2').click();
+
+  await expect(page).toHaveURL('products/p2.html');
+  await expect(page.getByRole('heading', { name: 'Eliksir Energii' })).toBeVisible();
+
+  await page.getByTestId('buy-btn-2').click();
+  await expect(page.getByText('Dodano do koszyka: Eliksir')).toBeVisible();
+
+  await page.getByTestId('cart-button').click();
+  await expect(page.getByTestId('cart-panel')).toBeVisible();
+  await expect(page.getByText('Eliksir Energii (p2)')).toBeVisible();
+  await page.getByTestId('cart-buy').click();
+
+  await page.getByText('sukces').click();
 });
 
-test('get started link', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
-
-  // Click the get started link.
-  await page.getByRole('link', { name: 'Get started' }).click();
-
-  // Expects page to have a heading with the name of Installation.
-  await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
-});
+ 
